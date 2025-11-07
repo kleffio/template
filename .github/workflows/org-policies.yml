@@ -14,6 +14,7 @@ permissions:
   id-token: write
 
 jobs:
+  # Linting jobs - run on all events
   yamllint:
     name: YAML Lint
     uses: kleffio/.github/.github/workflows/_yaml-lint.yml@main
@@ -26,29 +27,52 @@ jobs:
     name: Action Lint
     uses: kleffio/.github/.github/workflows/_actionlint.yml@main
 
+  shellcheck:
+    name: Shell Check
+    uses: kleffio/.github/.github/workflows/_shellcheck.yml@main
+
+  hadolint:
+    name: Dockerfile Lint
+    uses: kleffio/.github/.github/workflows/_hadolint.yml@main
+
+  # PR-specific jobs
   pr-title:
     name: PR Title Check
+    if: github.event_name == 'pull_request'
     uses: kleffio/.github/.github/workflows/_pr-title.yml@main
 
   require-label:
     name: Require Label
+    if: github.event_name == 'pull_request'
     uses: kleffio/.github/.github/workflows/_require-label.yml@main
-
-  reuse:
-    name: REUSE Compliance
-    uses: kleffio/.github/.github/workflows/_reuse-compliance.yml@main
-
-  label-sync:
-    name: Label Sync
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    uses: kleffio/.github/.github/workflows/_label-sync.yml@main
 
   auto-label:
     name: Auto Label PR
     if: github.event_name == 'pull_request'
     uses: kleffio/.github/.github/workflows/_auto-label.yml@main
 
+  size-labels:
+    name: PR Size Label
+    if: github.event_name == 'pull_request'
+    uses: kleffio/.github/.github/workflows/_size-labels.yml@main
+
+  auto-request-reviewers:
+    name: Auto Request Reviewers
+    if: github.event_name == 'pull_request' && github.event.action == 'opened'
+    uses: kleffio/.github/.github/workflows/_auto-request-reviewers.yml@main
+
+  # Compliance checks - run on all events
+  reuse:
+    name: REUSE Compliance
+    uses: kleffio/.github/.github/workflows/_reuse-compliance.yml@main
+
+  # Main branch only jobs
   openssf:
     name: OpenSSF Scorecard
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     uses: kleffio/.github/.github/workflows/_openssf-scorecard.yml@main
+
+  label-sync:
+    name: Label Sync
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: kleffio/.github/.github/workflows/_label-sync.yml@main
