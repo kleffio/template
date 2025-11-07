@@ -1,0 +1,17 @@
+name: Test Simple Workflow
+on:
+  push:
+    branches: ["**"]
+  workflow_dispatch:
+
+jobs:
+  test-direct:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Echo test
+        run: echo "Direct job works!"
+
+  test-reusable:
+    uses: kleffio/.github/.github/workflows/_yaml-lint.yml@main
+    permissions:
+      contents: read
