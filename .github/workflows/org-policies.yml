@@ -5,6 +5,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  security-events: write
+  id-token: write
+
 jobs:
   org-policies:
     uses: kleffio/.github/.github/workflows/_org-policies.yml@main
