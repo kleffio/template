@@ -1,8 +1,9 @@
-name: Kleff Org Policies
+name: CI Checks
 on:
   push:
     branches: ["**"]
   pull_request:
+    types: [opened, synchronize, reopened, labeled, unlabeled]
   workflow_dispatch:
 
 permissions:
@@ -13,11 +14,41 @@ permissions:
   id-token: write
 
 jobs:
-  org-policies:
-    uses: kleffio/.github/.github/workflows/_org-policies.yml@main
-    permissions:
-      contents: read
-      issues: write
-      pull-requests: write
-      security-events: write
-      id-token: write
+  yamllint:
+    name: YAML Lint
+    uses: kleffio/.github/.github/workflows/_yaml-lint.yml@main
+
+  markdownlint:
+    name: Markdown Lint
+    uses: kleffio/.github/.github/workflows/_markdown-lint.yml@main
+
+  actionlint:
+    name: Action Lint
+    uses: kleffio/.github/.github/workflows/_actionlint.yml@main
+
+  pr-title:
+    name: PR Title Check
+    uses: kleffio/.github/.github/workflows/_pr-title.yml@main
+
+  require-label:
+    name: Require Label
+    uses: kleffio/.github/.github/workflows/_require-label.yml@main
+
+  reuse:
+    name: REUSE Compliance
+    uses: kleffio/.github/.github/workflows/_reuse-compliance.yml@main
+
+  label-sync:
+    name: Label Sync
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: kleffio/.github/.github/workflows/_label-sync.yml@main
+
+  auto-label:
+    name: Auto Label PR
+    if: github.event_name == 'pull_request'
+    uses: kleffio/.github/.github/workflows/_auto-label.yml@main
+
+  openssf:
+    name: OpenSSF Scorecard
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: kleffio/.github/.github/workflows/_openssf-scorecard.yml@main
